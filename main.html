@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TIKUM ASIK - Mobile Professional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #0d0d0d; --card: #141414; --border: #222;
+            --text-main: #e0e0e0; --text-dim: #888;
+            --accent-soft: #3498db; --founder: #f1c40f; --admin: #2ecc71;
+            --overlay: rgba(0,0,0,0.95);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        
+        /* Navbar - Responsive Height */
+        #nav { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(13,13,13,0.85); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 1000; border-bottom: 1px solid var(--border); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+        .logo-text { font-weight: 600; letter-spacing: 0.5px; font-size: 16px; color: #fff; }
+
+        /* User Nav Control */
+        .user-nav { display: flex; align-items: center; gap: 12px; }
+        .btn-post { background: var(--accent-soft); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .avatar-nav { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background-size: cover; background-position: center; background-color: #222; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+        /* Dropdown Mobile */
+        .dropdown { position: absolute; top: 55px; right: 10px; background: #1a1a1a; min-width: 150px; border-radius: 10px; display: none; flex-direction: column; padding: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid var(--border); }
+        .dropdown.show { display: flex; }
+        .dropdown button { background: transparent; color: var(--text-main); border: none; text-align: left; padding: 12px; border-radius: 6px; font-size: 13px; }
+
+        /* Banner Mobile Optimized */
+        #banner { width: 100%; height: 300px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; margin-top: 60px; border-bottom: 1px solid var(--border); text-align: center; }
+        #bannerImg { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0.35; }
+        #groupPic { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--border); z-index: 2; background-size: cover; background-position: center; background-color: #1a1a1a; }
+        #groupDesc { z-index: 2; color: var(--text-dim); margin-top: 12px; font-size: 12px; max-width: 85%; line-height: 1.4; font-weight: 300; }
+
+        /* Badges */
+        .badge { font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: 4px; border: 1px solid transparent; text-transform: uppercase; display: inline-block; }
+        .badge-founder { border-color: var(--founder); color: var(--founder); background: rgba(241,196,15,0.05); }
+        .badge-admin { border-color: var(--admin); color: var(--admin); background: rgba(46,204,113,0.05); }
+        .badge-custom { border-color: #555; color: #bbb; background: rgba(255,255,255,0.03); }
+
+        /* Gallery - Grid System 2 Columns on Mobile */
+        .container { padding: 15px; width: 100%; margin: auto; }
+        #gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        
+        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
+        .card img.post-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .card-footer { padding: 8px; display: flex; align-items: center; gap: 8px; }
+        .card-footer img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+        .user-info { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; }
+        .user-info span { font-size: 10px; font-weight: 500; text-overflow: ellipsis; overflow: hidden; }
+
+        /* Management Panel - Scrollable on Mobile */
+        #managementPanel { margin-top: 30px; padding: 15px; background: #111; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
+        table { width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }
+        th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid #1a1a1a; }
+
+        /* ANTI-ZOOM & Professional UI Modal */
+        .modal-ui { display: none; position: fixed; inset: 0; background: var(--overlay); z-index: 5000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .modal-box { background: #181818; width: 100%; max-width: 350px; padding: 20px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        
+        /* Font-size 16px is crucial for preventing iOS Zoom */
+        .modal-box input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 15px; font-size: 16px; outline: none; }
+        
+        /* Toast Notification */
+        #toast-container { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 300px; pointer-events: none; }
+        .toast { background: rgba(30,30,30,0.95); color: white; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 8px; font-size: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-20px); transition: 0.3s; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* Preview Overlay */
+        #imagePreviewOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 6000; align-items: center; justify-content: center; cursor: pointer; }
+        #imagePreviewOverlay img { max-width: 100%; max-height: 100vh; object-fit: contain; }
+
+        /* Deskripsi & Tombol Desktop vs Mobile */
+        @media (min-width: 768px) {
+            #gallery { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+            #banner { height: 400px; }
+            .logo-text { font-size: 20px; }
+            .card-footer img { width: 30px; height: 30px; }
+            .user-info span { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div class="logo-text">TIKUM ASIK</div>
+    <div class="user-nav">
+        <button class="btn-post" onclick="document.getElementById('inpFile').click()">+ Post</button>
+        <div id="userAvatar" class="avatar-nav" onclick="document.getElementById('userDropdown').classList.toggle('show')"></div>
+        <div id="userDropdown" class="dropdown">
+            <button onclick="lihatFotoProfil()">Profil</button>
+            <button onclick="document.getElementById('inpProfile').click()">Ganti Foto</button>
+            <button onclick="logout()" style="color: #666; border-top: 1px solid #222;">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="imagePreviewOverlay" onclick="closeImagePreview()">
+    <img id="previewImgContent" src="">
+</div>
+
+<div id="uiModal" class="modal-ui">
+    <div class="modal-box">
+        <h4 id="uiTitle" style="margin:0 0 10px; font-size:16px;"></h4>
+        <p id="uiDesc" style="font-size:13px; color:var(--text-dim); margin-bottom:15px;"></p>
+        <div id="uiInputArea"></div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeUIModal()" style="flex:1; padding:12px; border-radius:8px; border:none; background:#222; color:#888; font-weight:600;">Batal</button>
+            <button id="uiConfirmBtn" style="flex:1; padding:12px; border-radius:8px; border:none; background:var(--accent-soft); color:#fff; font-weight:600;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<input type="file" id="inpFile" hidden onchange="uploadPost()">
+<input type="file" id="inpProfile" hidden onchange="updateProfileUser()">
+<input type="file" id="inpBanner" hidden onchange="changeBanner()">
+<input type="file" id="inpLogo" hidden onchange="changeLogo()">
+
+<div id="banner">
+    <img id="bannerImg" src="" onclick="triggerWebAsset('banner')">
+    <div id="groupPic" onclick="triggerWebAsset('logo')"></div>
+    <div id="statusTag" style="z-index:2; margin-top: 10px;"></div>
+    <p id="groupDesc" onclick="triggerEditDesc()">Klik untuk edit deskripsi...</p>
+</div>
+
+<div class="container">
+    <div id="gallery"></div>
+    <div id="managementPanel">
+        <h3 style="font-weight:400; font-size:14px; margin-bottom:15px; color:var(--text-dim);">Daftar Anggota</h3>
+        <table id="userTable">
+            <thead><tr><th>Username</th><th>Gelar</th><th id="thAction" style="display:none">Opsi</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const cloudName = "dbtmyrmn8";
+    const uploadPreset = "tikumkenangan";
+
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    let users = JSON.parse(localStorage.getItem('users') || "[]");
+    let galeri = JSON.parse(localStorage.getItem('galeri') || "[]");
+
+    function init() {
+        if(!currentUser) { window.location.href = "login.html"; return; }
+        const dbU = users.find(u => u.username === currentUser.username);
+        const role = (currentUser.username === 'vixzaa') ? 'founder' : (dbU ? dbU.role : 'user');
+        
+        renderUserNav(); renderGallery(role); loadAssets(); renderUserTable(role);
+        
+        if(role === 'founder') {
+            document.getElementById('statusTag').innerHTML = "<span class='badge badge-founder'>Founder</span>";
+            document.getElementById('thAction').style.display = "table-cell";
+        } else if(role === 'admin') {
+            document.getElementById('statusTag').innerHTML = "<span class='badge badge-admin'>Admin</span>";
+        }
+    }
+
+    // --- MOBILE PREVIEW & TOAST ---
+    function openImagePreview(url) {
+        document.getElementById('previewImgContent').src = url;
+        document.getElementById('imagePreviewOverlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Stop scrolling
+    }
+    function closeImagePreview() {
+        document.getElementById('imagePreviewOverlay').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function showToast(msg) {
+        const t = document.createElement('div'); t.className = 'toast'; t.innerText = msg;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.classList.add('show'), 50);
+        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2500);
+    }
+
+    function openUIModal(title, desc, btnLabel, onConfirm, showInp = false, inpVal = "") {
+        document.getElementById('uiTitle').innerText = title;
+        document.getElementById('uiDesc').innerText = desc;
+        const btn = document.getElementById('uiConfirmBtn');
+        btn.innerText = btnLabel;
+        btn.style.background = btnLabel.toLowerCase().includes('hapus') ? '#3d1a1a' : 'var(--accent-soft)';
+        btn.style.color = btnLabel.toLowerCase().includes('hapus') ? '#ff6b6b' : '#fff';
+        const area = document.getElementById('uiInputArea');
+        area.innerHTML = showInp ? `<input type="text" id="uiInput" value="${inpVal}">` : "";
+        btn.onclick = () => { onConfirm(showInp ? document.getElementById('uiInput').value : null); closeUIModal(); };
+        document.getElementById('uiModal').style.display = 'flex';
+    }
+    function closeUIModal() { document.getElementById('uiModal').style.display = 'none'; }
+
+    // --- RENDER LOGIC ---
+    function renderUserTable(myRole) {
+        const tbody = document.querySelector('#userTable tbody');
+        tbody.innerHTML = users.map(u => {
+            const isF = u.username === 'vixzaa'; const isA = u.role === 'admin';
+            let b = isF ? `<span class="badge badge-founder">Founder</span>` : (isA ? `<span class="badge badge-admin">Admin</span>` : '');
+            if(u.customTitle) b += `<span class="badge badge-custom">${u.customTitle}</span>`;
+            let acts = (myRole === 'founder' && !isF) ? `<td>
+                <button onclick="giveTitle('${u.username}')" style="background:none; border:1px solid #333; color:#888; padding:4px 8px; border-radius:4px; font-size:10px; margin-bottom:4px">Gelar</button>
+                <button onclick="confirmDeleteUser('${u.username}')" style="background:none; border:1px solid #333; color:#a55; padding:4px 8px; border-radius:4px; font-size:10px">Hapus</button>
+            </td>` : (myRole === 'founder' ? '<td>-</td>' : '');
+            return `<tr><td>${u.username}</td><td>${b||'Member'}</td>${acts}</tr>`;
+        }).join('');
+    }
+
+    function renderGallery(role) {
+        const container = document.getElementById('gallery');
+        container.innerHTML = galeri.map((g, i) => {
+            const uDB = users.find(u => u.username === g.user);
+            const uRole = (g.user === 'vixzaa') ? 'founder' : (uDB ? uDB.role : 'user');
+            const canD = (g.user === currentUser.username) || (role === 'founder') || (role === 'admin');
+            let b = uRole === 'founder' ? '<span class="badge badge-founder">F</span>' : (uRole === 'admin' ? '<span class="badge badge-admin">A</span>' : '');
+            if(uDB && uDB.customTitle) b += `<span class="badge badge-custom" style="font-size:6px">${uDB.customTitle}</span>`;
+
+            return `<div class="card">
+                <img src="${g.url}" class="post-img" onclick="openImagePreview('${g.url}')">
+                <div class="card-footer">
+                    <img src="${g.profileUrl || 'https://ui-avatars.com/api/?name='+g.user}">
+                    <div class="user-info">
+                        <span>${g.user}</span>
+                        <div style="margin-top:2px">${b}</div>
+                    </div>
+                    ${canD ? `<button onclick="confirmDeleteFoto(${i})" style="margin-left:auto; background:none; border:none; color:#555; font-size:9px;">×</button>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // --- ACTIONS ---
+    function giveTitle(un) {
+        const i = users.findIndex(u => u.username === un);
+        openUIModal("Gelar Khusus", `Beri gelar untuk ${un}`, "Simpan", (v) => {
+            if(v!==null){ users[i].customTitle = v; localStorage.setItem('users', JSON.stringify(users)); showToast("Berhasil!"); location.reload(); }
+        }, true, users[i].customTitle || "");
+    }
+
+    function triggerEditDesc() {
+        if(currentUser.username !== 'vixzaa') return;
+        openUIModal("Edit Deskripsi", "Ubah sambutan grup", "Simpan", (v) => {
+            if(v){ localStorage.setItem('assetDesc', v); showToast("Terupdate!"); location.reload(); }
+        }, true, document.getElementById('groupDesc').innerText);
+    }
+
+    function confirmDeleteFoto(i) { openUIModal("Hapus Foto?", "Hapus permanen foto ini?", "Hapus", () => { galeri.splice(i,1); localStorage.setItem('galeri', JSON.stringify(galeri)); location.reload(); }); }
+    function confirmDeleteUser(un) { openUIModal("Hapus User?", `Hapus ${un} dari tim?`, "Hapus Akun", () => { users = users.filter(u => u.username !== un); localStorage.setItem('users', JSON.stringify(users)); location.reload(); }); }
+
+    // --- SYSTEM ---
+    async function uploadToCloud(f) { const fd = new FormData(); fd.append('file', f); fd.append('upload_preset', uploadPreset); const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {method:'POST', body:fd}); return await r.json(); }
+    async function uploadPost() { showToast("Sedang upload..."); const r = await uploadToCloud(document.getElementById('inpFile').files[0]); const d = users.find(u => u.username === currentUser.username); galeri.push({user:currentUser.username, url:r.secure_url, profileUrl:d?d.profileUrl:""}); localStorage.setItem('galeri', JSON.stringify(galeri)); location.reload(); }
+    async function updateProfileUser() { showToast("Updating profil..."); const r = await uploadToCloud(document.getElementById('inpProfile').files[0]); let i = users.findIndex(u => u.username === currentUser.username); if(i!==-1) users[i].profileUrl = r.secure_url; currentUser.profileUrl = r.secure_url; localStorage.setItem('users', JSON.stringify(users)); localStorage.setItem('currentUser', JSON.stringify(currentUser)); location.reload(); }
+    async function changeBanner() { if(currentUser.username==='vixzaa'){ showToast("Mengganti banner..."); const r = await uploadToCloud(document.getElementById('inpBanner').files[0]); localStorage.setItem('assetBanner', r.secure_url); location.reload(); } }
+    async function changeLogo() { if(currentUser.username==='vixzaa'){ showToast("Mengganti logo..."); const r = await uploadToCloud(document.getElementById('inpLogo').files[0]); localStorage.setItem('assetLogo', r.secure_url); location.reload(); } }
+
+    function triggerWebAsset(t) { if(currentUser.username === 'vixzaa') document.getElementById(t === 'banner' ? 'inpBanner' : 'inpLogo').click(); }
+    function loadAssets() {
+        const b=localStorage.getItem('assetBanner'), l=localStorage.getItem('assetLogo'), d=localStorage.getItem('assetDesc');
+        if(b) document.getElementById('bannerImg').src = b;
+        if(l) document.getElementById('groupPic').style.backgroundImage = `url(${l})`;
+        if(d) document.getElementById('groupDesc').innerText = d;
+    }
+    function renderUserNav() {
+        const n = document.getElementById('userAvatar'); const d = users.find(u => u.username === currentUser.username);
+        const p = d ? d.profileUrl : currentUser.profileUrl;
+        if(p) n.style.backgroundImage = `url(${p})`; else n.innerText = currentUser.username[0].toUpperCase();
+    }
+    function logout() { localStorage.removeItem('currentUser'); window.location.href = "login.html"; }
+    function lihatFotoProfil() { const d = users.find(u => u.username === currentUser.username); if(d && d.profileUrl) openImagePreview(d.profileUrl); }
+
+    // Close dropdown on click outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.avatar-nav')) {
+            const dropdowns = document.getElementsByClassName("dropdown");
+            for (let i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].classList.contains('show')) dropdowns[i].classList.remove('show');
+            }
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>

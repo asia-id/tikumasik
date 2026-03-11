@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up - Kenangan Tongkrongan</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{background:#121212;color:#eee;font-family:Roboto,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
+.box{background:#1f1f1f;padding:40px;border-radius:20px;width:300px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
+input{width:100%;padding:12px 15px;margin:10px 0;border-radius:30px;border:1px solid #555;background:#121212;color:#eee;}
+input::placeholder{color:#888;}
+button{width:100%;padding:12px 20px;margin-top:10px;border-radius:30px;border:none;background:#27ae60;color:#fff;cursor:pointer;font-weight:500;transition:0.3s;}
+button:hover{opacity:0.8;}
+a{color:#3498db;text-decoration:none;display:block;margin-top:10px;}
+
+/* Loading spinner */
+#loadingOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;justify-content:center;align-items:center;}
+#loadingOverlay div{border:6px solid #fff;border-top:6px solid #3498db;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Sign Up</h2>
+  <input type="text" id="username" placeholder="Nama kamu">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Sign Up</button>
+  <a href="login.html">Sudah punya akun? Login</a>
+</div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay"><div></div></div>
+
+<script>
+function showLoading(callback){
+  const overlay=document.getElementById('loadingOverlay');
+  overlay.style.display='flex';
+  setTimeout(callback,800);
+}
+
+function signup(){
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value.trim();
+  if(!username||!password)return alert("Isi nama dan password!");
+  
+  let users=JSON.parse(localStorage.getItem('users')||"[]");
+  if(users.find(u=>u.username===username))return alert("Username sudah dipakai!");
+  
+  users.push({username,password});
+  localStorage.setItem('users',JSON.stringify(users));
+  alert("Akun berhasil dibuat!");
+  showLoading(()=>{window.location.href="login.html";});
+}
+</script>
+
+</body>
+</html>
